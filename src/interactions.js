@@ -1,6 +1,8 @@
 // src/interactions.js
 // Pointer and wheel handling: create, drag, delete nodes, zoom, pan.
-// Calls onChange() whenever state or view changes.
+// Calls onChange() whenever state or view changes, and onScaleComplete()
+// the moment the second scale node is placed (which happens at most once,
+// since scale nodes can never be removed).
 
 import { state } from "./state.js";
 import { toImage, toScreen, zoomAt, zoomFactor, panBy } from "./view.js";
@@ -8,7 +10,7 @@ import { toImage, toScreen, zoomAt, zoomFactor, panBy } from "./view.js";
 const BASE_HIT_RADIUS = 10; // screen pixels
 const DRAG_THRESHOLD = 4; // screen pixels
 
-export function attachInteractions(canvas, onChange) {
+export function attachInteractions(canvas, onChange, onScaleComplete) {
   canvas.addEventListener("auxclick", (e) => e.preventDefault());
 
   let drag = null; // { nodes, index }
@@ -100,7 +102,13 @@ export function attachInteractions(canvas, onChange) {
       } else {
         const p = toImage(downPos.x, downPos.y);
         if (state.tool === "scale") {
-          if (state.scaleNodes.length < 2) state.scaleNodes.push(p);
+          if (state.scaleNodes.length < 2) {
+            state.scaleNodes.push(p);
+            if (state.scaleNodes.length === 2) {
+              // Scale just became complete — hand off to measure mode.
+              onScaleComplete();
+            }
+          }
         } else {
           state.waypoints.push(p);
         }

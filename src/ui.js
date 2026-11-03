@@ -80,5 +80,5 @@ export function createUi(onChange, zoomActions) {
     }
   }
 
-  return { refresh };
+  return { refresh, setTool };
 }

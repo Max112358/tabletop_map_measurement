@@ -86,5 +86,5 @@ new ResizeObserver(() => {
 }).observe(canvas.parentElement);
 
 renderer.resize();
-attachInteractions(canvas, update);
+attachInteractions(canvas, update, () => ui.setTool("measure"));
 update();
