@@ -24,6 +24,7 @@ export function createUi(onChange, zoomActions) {
     zoomIn: document.getElementById("zoom-in"),
     zoomOut: document.getElementById("zoom-out"),
     zoomFit: document.getElementById("zoom-fit"),
+    clearWaypoints: document.getElementById("clear-waypoints"),
   };
 
   function setTool(tool) {
@@ -53,6 +54,12 @@ export function createUi(onChange, zoomActions) {
   els.alphaSlider.addEventListener("input", () => {
     state.overlayAlpha = parseFloat(els.alphaSlider.value);
     saveOverlayAlpha(state.overlayAlpha);
+    onChange();
+  });
+
+  els.clearWaypoints.addEventListener("click", () => {
+    if (state.waypoints.length === 0) return;
+    state.waypoints.length = 0; // clear in place; scale nodes untouched
     onChange();
   });
 
